@@ -1,55 +1,74 @@
-# Dependencies
-gems:                [jekyll-paginate]
-markdown:            kramdown
+# Site settings
+title: 400dama blog
+description: "DunDunDunDun Ge~"
+baseurl: ""
+url: ""
 
-# Permalinks
-#
-# Use of `relative_permalinks` ensures post links from the index work properly.
-permalink:           /:year/:month/:day/:title.html
+# User settings
+username: 400dama
+user_title: 400dama
+email: gotenks9002@gmail.com
+github_username: 400dama
+profile_picture: "https://gitee.com/BugaoSion/dotfiles/raw/master/blog_temp/aniki-six.png"
 
-# Setup
-title:               "400dama blog"
-tagline:             'DunDunDunDunGe~'
-description:         'TD'
-url:                 400dama.gitee.io
-baseurl:             /
-paginate:            10
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: /:title/
 
-# About/contact
-author:
-  name:              Linusp
-  email:             gotenks9002@gmail.com
+# html minify
+compress_html:
+  clippings: all
+  comments: all
+  endings: []
+  profile: false
 
-# Social Media
-github:              https://github.com/400dama/
-gitee:               https://gitee.com/BugaoSion/
-flickr:              https://flickr.com/photos/400dama/
+# Links to include in menu navigation
+links:
+  section_1:
+    - title: home
+      url: /
+      key_trigger: 1
 
-# sidebar nav
-nav:
-  - text: 分类
-    url : /categories.html
-  - text: 标签
-    url : /tags.html
-  - text: 归档
-    url : /archive.html
-  - text: 链接
-    url : /link.html
-  - text: 关于
-    url : /about.html
-  - text: email
-    url: mailto:gotenks9002@gmail.com
-  - text: github
-    url : https://github.com/400dama/
-  - text: gitee
-    url : https://gitee.com/BugaoSion/
-  - text: flickr
-    url : https://flickr.com/photos/400dama/
-# - text: Feed
-  #   url : /feed.html
+    - title: my posts
+      url: /posts
+      key_trigger: 2
 
-# Theme Author (Please don't edit this line cause of MIT LICENSE rules)
-theme_settings:
-  creator:           Rizky Ariestiyansyah
-  codename:          Naringu
-  link:              https://github.com/ariestiyansyah/naringu
+    - title: series
+      url: /series
+      key_trigger: 3
+
+    - title: tags
+      url: /tags
+      key_trigger: 4
+
+    - title: about me
+      url: /about
+      key_trigger: 5
+
+  section_2:
+    - title: github
+      url: http://www.github.com/400dama
+      new_tab: true
+      key_trigger: g
+
+    - title: gitee
+      url: https://gitee.com/BugaoSion
+      new_tab: true
+      key_trigger: e
+
+    - title: search
+      url: ""
+      key_trigger: s #WARNING: search only works with "s"
+
+# projects in header index
+# projects:
+#   - name: fluany
+#     url: https://github.com/fluany/fluany
+#   - name: vim-frontend
+#     url: https://github.com/victorvoid/vim-frontend
+#   - name: generator-capybara
+#     url: https://github.com/victorvoid/generator-capybara 
+
+# exclude my node related stuff
+exclude: ['package.json', 'src', 'node_modules']
