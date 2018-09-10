@@ -1,0 +1,55 @@
+# Dependencies
+gems:                [jekyll-paginate]
+markdown:            kramdown
+
+# Permalinks
+#
+# Use of `relative_permalinks` ensures post links from the index work properly.
+permalink:           /:year/:month/:day/:title.html
+
+# Setup
+title:               "400dama blog"
+tagline:             'DunDunDunDunGe~'
+description:         'TD/emacser/ML'
+url:                 400dama.gitee.io
+baseurl:             /
+paginate:            10
+
+# About/contact
+author:
+  name:              400dama
+  email:             gotenks9002@gmail.com
+
+# Social Media
+github:              https://github.com/400dama/
+gitee:               https://gitee.com/BugaoSion/
+flickr:              https://flickr.com/photos/400dama/
+
+# sidebar nav
+nav:
+  - text: 分类
+    url : /categories.html
+  - text: 标签
+    url : /tags.html
+  - text: 归档
+    url : /archive.html
+  - text: 链接
+    url : /link.html
+  - text: 关于
+    url : /about.html
+  - text: email
+    url: mailto:gotenks9002@gmail.com
+  - text: github
+    url : https://github.com/400dama/
+  - text: gitee
+    url : https://gitee.com/BugaoSion/
+  - text: flickr
+    url : https://flickr.com/photos/400dama/
+# - text: Feed
+  #   url : /feed.html
+
+# Theme Author (Please don't edit this line cause of MIT LICENSE rules)
+theme_settings:
+  creator:           Rizky Ariestiyansyah
+  codename:          Naringu
+  link:              https://github.com/ariestiyansyah/naringu
