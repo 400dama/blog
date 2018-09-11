@@ -166,6 +166,8 @@ tags       : Linux
 
 #+BEGIN_QUOTE
 AUTHOR:  400dama
+
 LINK:    https://400dama.xyz/2018/09/11/linux-install-note.html
+
 LICENSE: 本博客所有文章除特别声明外，均采用 [[https://creativecommons.org/licenses/by-nc/4.0/][CC BY-NC 4.0]] 许可协议。转载请注明出处！
 #+END_QUOTE
