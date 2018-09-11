@@ -1,0 +1,29 @@
+#+startup: showall
+#+options: toc:nil
+#+begin_export html
+---
+layout     : post
+title      : vmware下设置linux分辨率
+categories : Linux
+tags       : vmware
+---
+#+end_export
+#+TOC: headlines 2
+
+这个笔记是第一次在VMWare中使用manjaro产生的头大问题。下面的脚本已经不用了。
+现在的做法是在进入桌面前，直接开vmware的全屏模式，在进入桌面后，循环使用多个监视器。
+
+#+BEGIN_SRC shell
+  cvt 1600 900
+  # get modeline then create a sh file
+  #!/bin/zsh
+  sudo xrandr --newmode "1600x900_60.00" 118.25  1600 1696 1856 2112  900 903 908 934 -hsync +vsync
+  sudo xrandr --addmode Virtual1 1600x900_60.00
+  sudo xrandr --output Virtual1 --mode 1600x900_60.00
+#+END_SRC
+
+#+BEGIN_QUOTE
+AUTHOR:  400dama
+LINK:    https://400dama.xyz/2018/09/11/linux-install-note.html
+LICENSE: 本博客所有文章除特别声明外，均采用 [[https://creativecommons.org/licenses/by-nc/4.0/][CC BY-NC 4.0]] 许可协议。转载请注明出处！
+#+END_QUOTE

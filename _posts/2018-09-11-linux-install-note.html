@@ -1,0 +1,233 @@
+---
+layout     : post
+title      : Linux Install Notes
+categories : Linux
+tags       : Linux
+---
+<div id="table-of-contents">
+<h2>&#30446;&#24405;</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org6bac193">Manjaro</a>
+<ul>
+<li><a href="#org3833a37">Change Mirrors</a></li>
+</ul>
+</li>
+<li><a href="#org439a104">Arch</a></li>
+<li><a href="#org5323620">Comman</a></li>
+</ul>
+</div>
+</div>
+
+<p>
+这是我在安装Linux时，做的一些记录，方便自己查看。
+</p>
+
+<p>
+关于镜像的制作当时没有记录，只能等下次了。
+</p>
+
+<div id="outline-container-org6bac193" class="outline-2">
+<h2 id="org6bac193">Manjaro</h2>
+<div class="outline-text-2" id="text-org6bac193">
+</div>
+<div id="outline-container-org3833a37" class="outline-3">
+<h3 id="org3833a37">Change Mirrors</h3>
+<div class="outline-text-3" id="text-org3833a37">
+<p>
+首先当然是切换镜像源。这里选择清华大学镜像源。在shell里做下面这些事情：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">sudo pacman-mirrors -i -c China -m rank
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- Select mirror</span>
+sudo vim /etc/pacman.conf
+<span style="color: #586e75;"># </span><span style="color: #586e75;">&#65293; Add sth.</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">[archlinuxcn]</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">SigLevel = Optional TrustedOnly</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">:wq</span>
+sudo pacman -Syy
+sudo pacman -S archlinux-keyring
+yaourt -Syua
+sudo vim /etc/yaourtrc
+<span style="color: #586e75;"># </span><span style="color: #586e75;">Add sth.</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">AURURL="https://aur.tuna.tsinghua.edu.cn"</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">:wq</span>
+</pre>
+</div>
+
+<p>
+然后安装你需要的东西。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org439a104" class="outline-2">
+<h2 id="org439a104">Arch</h2>
+<div class="outline-text-2" id="text-org439a104">
+<p>
+关于arch的安装其实 <a href="https://wiki.archlinux.org/index.php/Installation_guide">arch wiki</a> 真的是相当详细了，具体操作参考 wiki。
+</p>
+<ol class="org-ol">
+<li><p>
+连接wifi，设置时区
+</p>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #586e75;"># </span><span style="color: #586e75;">- connect wifi or use netctl</span>
+wifi-menu
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- Update the system clock</span>
+timedatectl set-ntp true
+systemctl enable --now systemd-timesyncd.service
+</pre>
+</div></li>
+
+<li><p>
+分区
+</p>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #586e75;"># </span><span style="color: #586e75;">- List disk information</span>
+fdisk
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- partition the disk Note:o-&gt;mbr p-&gt;gpt</span>
+fdisk /dev/sda
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- format</span>
+mkfs.ext4 /dev/sda1
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- mount</span>
+mount /dev/sda1 /mnt
+</pre>
+</div></li>
+
+<li><p>
+更换镜像源并安装
+</p>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #586e75;"># </span><span style="color: #586e75;">- Use s-* to find tuna, dd to cut this line, yy pasete at first line.</span>
+vim /etc/pacman.d/mirrorlist
+<span style="color: #586e75;"># </span><span style="color: #586e75;">:wq</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- Install arch</span>
+pacstrap /mnt base base-devel
+</pre>
+</div></li>
+
+<li><p>
+基础配置
+</p>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #586e75;"># </span><span style="color: #586e75;">- Fstab file</span>
+genfstab -L /mnt &gt;&gt; /mnt/etc/fstab
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- Check fstab file</span>
+cat /mnt/etc/fstab
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- Change root</span>
+arch-chroot /mnt
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- Set Timezone</span>
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+hwclock --systohc
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- Install basic tools</span>
+pacman -S vim dialog wpa_supplicant ntfs-3g networkmanager netctl wireless_tools wpa_actiond
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- Set locale</span>
+vim /etc/locale.gen
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- Add this(with out #) in locale.gen</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">en_US.UTF-8 UTF-8</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">zh_CN.UTF-8 UTF-8</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">:wq</span>
+locale-gen
+vim /etc/locale.conf
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- Add this in locale.conf</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">LANG=en_US.UTF-8</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">:wq</span>
+vim /etc/hostname
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- Add this in hostname</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">400dama</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">:wq</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- Set root password</span>
+passwd
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- Install and set grub</span>
+pacman -S intel-ucode os-prober grub
+grub-install --target=i386-pc /dev/sdx
+grub-mkconfig -o /boot/grub/grub.cfg
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- If failed to connect to lvmetad</span>
+vim /etc/lvm/lvm.conf
+<span style="color: #586e75;"># </span><span style="color: #586e75;">use_lvmetad = 0</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">:wq</span>
+<span style="color: #859900; font-weight: bold;">exit</span>
+reboot
+</pre>
+</div></li>
+
+<li><p>
+个人设置
+</p>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #586e75;"># </span><span style="color: #586e75;">- Add user</span>
+useradd -m -G wheel username
+passwd username
+pacman -S sudo
+visudo
+<span style="color: #586e75;"># </span><span style="color: #586e75;">%wheel ALL=(ALL)ALL</span>
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- Auto connect you wifi</span>
+ls /etc/netctl/
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- xxxxx is a file when you connect with wifi-menu auto generated.</span>
+sudo cat /etc/netctl/xxxxx
+systemctl start netctl-auto@vvv.service
+systemctl enable netctl-auto@vvv.service
+</pre>
+</div></li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org5323620" class="outline-2">
+<h2 id="org5323620">Comman</h2>
+<div class="outline-text-2" id="text-org5323620">
+<ol class="org-ol">
+<li>左ctrl和Caps交换
+再买把HHKB不就好了！
+<del>#+BEGIN<sub>SRC</sub> shell</del>
+  <del>sudo vim /etc/profile</del>
+  <del># Add this in the file</del>
+  <del># setxkbmap -option ctrl:swapcaps</del>
+  <del># :wq</del>
+<del>#+END<sub>SRC</sub></del></li>
+
+<li><p>
+安装小鹤双拼
+</p>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #586e75;"># </span><span style="color: #586e75;">- Install Chinese Language Packages At First</span>
+sudo pacman -S fcitx-rime fcitx-im fcitx-configtool fcitx-skin-material
+<span style="color: #586e75;"># </span><span style="color: #586e75;">add blow to .xprofile or ./xinitrc</span>
+<span style="color: #839496; font-weight: bold;">export</span> <span style="color: #268bd2;">GTK_IM_MODULE</span>=fcitx
+<span style="color: #839496; font-weight: bold;">export</span> <span style="color: #268bd2;">QT_IM_MODULE</span>=fcitx
+<span style="color: #839496; font-weight: bold;">export</span> <span style="color: #268bd2;">XMODIFIERS</span>=@<span style="color: #268bd2;">im</span>=fcitx
+<span style="color: #586e75;"># </span><span style="color: #586e75;">Install xiaohe</span>
+git clone https://gitee.com/BugaoSion/rime-xhup.git ~/rime-xhup
+cp ~/rime-xhup/xhup.schema.yaml ~/.config/fcitx/rime/xhup.schema.yaml
+cp ~/rime-xhup/xhup.dict.yaml ~/.config/fcitx/rime/xhup.dict.yaml
+<span style="color: #586e75;"># </span><span style="color: #586e75;">Add xhup to schema_list</span>
+sudo emacs ~/.config/fcitx/rime/build/default.yaml
+</pre>
+</div></li>
+
+<li><p>
+LaTex
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">sudo pacman -S texlive-most
+</pre>
+</div></li>
+</ol>
+
+<p>
+到这里就差不多了。
+</p>
+
+<blockquote>
+<p>
+AUTHOR:  400dama
+LINK:    <a href="https://400dama.xyz/2018/09/11/linux-install-note.html">https://400dama.xyz/2018/09/11/linux-install-note.html</a>
+LICENSE: 本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a> 许可协议。转载请注明出处！
+</p>
+</blockquote>
+</div>
+</div>
