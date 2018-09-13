@@ -14,7 +14,7 @@ tags       : [TD, GIT]
 
 我的情况是这样的：
 
-有一些现成的仓库比如博客、笔记、emacs配置还有和朋友一起分享资料的仓库。但是挨个clone下来有点累，放进一个仓库又不现实+毕竟有一些并能说的秘密+。而且经常会需要从github上clone一些别人的项目下来学习和使用，clone到当前项目是不可能的，clone到外面再复制进来嘛太麻烦。如果修改这个项目，我想=pull requests=也蛋疼。所以就玩了一波git submoudle，用起来感觉良好，就是有点麻烦。
+有一些现成的仓库比如博客、笔记、emacs配置还有和朋友一起分享资料的仓库。但是挨个clone下来有点累，放进一个仓库又不现实+毕竟有一些并能说的秘密+。而且经常会需要从github上clone一些别人的项目下来学习和使用，clone到当前项目是不可能的，clone到外面再复制进来嘛太麻烦。如果修改这个项目，我想pull requests也蛋疼。所以就玩了一波git submoudle，用起来感觉良好，就是有点麻烦。
 
 * Git 基础配置
 
@@ -34,7 +34,7 @@ tags       : [TD, GIT]
 
 使用下面的命令来生成key，下面的邮箱我先填写自己的github帐号的注册邮箱(之前我用其他邮箱生成的key,但是在github上contributions并没有记录我的提交)。
 
-运行命令后会让你输入ssh key的名字，这里我先填写为=id_rsa_github=，然后一通回车后就创建好了。
+运行命令后会让你输入ssh key的名字，这里我先填写为="id_rsa_github"=，然后一通回车后就创建好了。
 
 #+BEGIN_SRC shell
   ssh-keygen-t rsa -C"400dama@400dama.xyz"
@@ -205,6 +205,8 @@ git 的命令有时候会很长，并过git可以为命令设置短名。
 #+END_SRC
 
 使用了子仓库一段时间，到现在是真香状态。
+
+更详细的教程可以参考 [[https://git-scm.com/book/en/v2][Pro Git]]
 
 #+BEGIN_QUOTE
 AUTHOR:  400dama
