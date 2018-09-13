@@ -1,0 +1,363 @@
+---
+layout     : post
+title      : 身为TD，我的代码管理流程
+categories : [TD, GIT]
+tags       : [TD, GIT]
+---
+<div id="table-of-contents">
+<h2>&#30446;&#24405;</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgbcd8e34">Git 基础配置</a>
+<ul>
+<li><a href="#orgaf91f97">安装</a></li>
+<li><a href="#orgcaaf9c4">ssh设置</a></li>
+</ul>
+</li>
+<li><a href="#orgb63652f">子仓库</a>
+<ul>
+<li><a href="#org6b8bf1b">添加子仓库</a></li>
+<li><a href="#orgefeedf2">Clone 包含子仓库的项目</a></li>
+<li><a href="#org60cf1f9">修改子仓库</a></li>
+<li><a href="#org908b74e">更新子仓库</a></li>
+<li><a href="#org590f62e">删除子仓库</a></li>
+<li><a href="#orgb49c45f">批量操作</a></li>
+<li><a href="#orgc4c3dec">其他</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<p>
+因为TD这个职位基本每天都是在撸代码，所以代码的管理也是十分必要的，这篇文章记录一下我个人的代码管理流程。其实核心思想就是对各部分文件创建独立的仓库，然后用一个主要的仓库来进行引用管理，麻烦是真的麻烦了一些，不过这样分开管理的方式我是比较喜欢的。
+</p>
+
+<p>
+我的情况是这样的：
+</p>
+
+<p>
+有一些现成的仓库比如博客、笔记、emacs配置还有和朋友一起分享资料的仓库。但是挨个clone下来有点累，放进一个仓库又不现实+毕竟有一些并能说的秘密+。而且经常会需要从github上clone一些别人的项目下来学习和使用，clone到当前项目是不可能的，clone到外面再复制进来嘛太麻烦。如果修改这个项目，我想=pull requests=也蛋疼。所以就玩了一波git submoudle，用起来感觉良好，就是有点麻烦。
+</p>
+
+<div id="outline-container-orgbcd8e34" class="outline-2">
+<h2 id="orgbcd8e34">Git 基础配置</h2>
+<div class="outline-text-2" id="text-orgbcd8e34">
+</div>
+<div id="outline-container-orgaf91f97" class="outline-3">
+<h3 id="orgaf91f97">安装</h3>
+<div class="outline-text-3" id="text-orgaf91f97">
+<p>
+因为是以Git进行管理，那么Git的安装也是有必须的了。通过<a href="https://git-scm.com/downloads">这个官方地址</a>进行安装。
+</p>
+
+<p>
+因为我使用的是archlinux，所以用下面的命令进行安装(上面的连接有详细介绍)
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">pacman -S git
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcaaf9c4" class="outline-3">
+<h3 id="orgcaaf9c4">ssh设置</h3>
+<div class="outline-text-3" id="text-orgcaaf9c4">
+<p>
+因为我同时使用Github和Git，所以在设置ssh的时候当然也有一些技巧。
+</p>
+
+<p>
+使用下面的命令来生成key，下面的邮箱我先填写自己的github帐号的注册邮箱(之前我用其他邮箱生成的key,但是在github上contributions并没有记录我的提交)。
+</p>
+
+<p>
+运行命令后会让你输入ssh key的名字，这里我先填写为=id<sub>rsa</sub><sub>github</sub>=，然后一通回车后就创建好了。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">ssh-keygen-t rsa -C<span style="color: #2aa198;">"400dama@400dama.xyz"</span>
+</pre>
+</div>
+
+<p>
+创建好key后需要去github的<a href="https://github.com/settings/ssh/new">SSH设置</a>里把=~/.ssh/id<sub>rsa</sub><sub>github.pub</sub>=里面的内容全部复制进key里，名字随便起，保存即可。
+</p>
+
+<p>
+然后再用同样的方法创建一个Gitee的key，邮箱也填写为gitee的注册邮箱，命名为=id<sub>rsa</sub><sub>gitee</sub>=， 然后去<a href="https://gitee.com/profile/sshkeys">SSH Key</a>里进行关联，操作一样。
+</p>
+
+<p>
+多个key创建好之后，需要做一个设置来让ssh能知道在什么时候使用哪个key。
+</p>
+
+<p>
+在=~/.ssh=下创建=config=文件，将下面内容复制进去修改成你的保存就行了。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text"># Github
+Host github.com
+HostName github.com
+User 400dama
+IdentityFile /home/dama/.ssh/id_rsa_github
+
+# Gitee
+Host gitee.com
+HostName gitee.com
+User 400dama
+IdentityFile /home/dama/.ssh/id_rsa_gitee
+</pre>
+</div>
+
+<p>
+如果你需要在同一个平台下设置多个key，也是同样的道理，不过需要修改也下=HOST=后面的内容，类似下面。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text"># Gitee_1
+Host giteeA.com
+HostName gitee.com
+User 400dama
+IdentityFile /home/dama/.ssh/id_rsa_giteeA
+
+# Gitee_2
+Host giteeB.com
+HostName gitee.com
+User 400dama
+IdentityFile /home/dama/.ssh/id_rsa_giteeB
+</pre>
+</div>
+
+<p>
+都妥了以后，就需要测试一下了。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">ssh -T git@gitee.com
+ssh -T git@github.com
+</pre>
+</div>
+
+<p>
+同平台多key的测试需要修改一下(平时使用的时候也要做如下修改)。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">ssh -T git@giteeA.com
+ssh -T git@giteeB.com
+</pre>
+</div>
+
+<p>
+如果返回的东西有＝welcome＝就说明成了，可以dun一个庆祝下了。
+</p>
+
+<p>
+因为git操作网上有很多教程，而且写的都比我好，所以我就不写了。上面这个ssh的设置，是当时坑了我一下，所以总结一波。
+</p>
+
+<p>
+下面直接跳到子仓库。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb63652f" class="outline-2">
+<h2 id="orgb63652f">子仓库</h2>
+<div class="outline-text-2" id="text-orgb63652f">
+<p>
+关于 git submodule 可能翻译成子模块更合适，但我喜欢用俗气的“子仓库”来称呼它。下面我用自己的一个<a href="https://gitee.com/BugaoSion/400dama">仓库</a>来举例。
+</p>
+</div>
+
+<div id="outline-container-org6b8bf1b" class="outline-3">
+<h3 id="org6b8bf1b">添加子仓库</h3>
+<div class="outline-text-3" id="text-org6b8bf1b">
+<p>
+首先我创建一个空的仓库做为主仓库命名为test，然后使用下面的命令把我emacs的配置文件添加为子仓库。这里使用https连接而不是ssh连接，是因为ssh别人不一定有权限，可以先用https再用=git config submodule.xxx.url=来设置子仓库的url为ssh，当然如果就你自己一个人用就无所谓了(我自己就都是ssh)。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">git submodule add https://gitee.com/BugaoSion/damacs.git dotfiles/damacs
+</pre>
+</div>
+
+<p>
+这样我的emacs配置仓库就添加进来了，在当前目录下的dotfiles里就能看到了。同时test目录下会生成.gitmodules文件，里面记录了子仓库的路径和名字。通过这种方式把所有需要的子仓库都添加进来，然后提交到远程仓库。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgefeedf2" class="outline-3">
+<h3 id="orgefeedf2">Clone 包含子仓库的项目</h3>
+<div class="outline-text-3" id="text-orgefeedf2">
+<p>
+现在主项目已经有了，clone下来的方法有两种，用哪个都行，我更喜欢第一个
+</p>
+
+<p>
+<b>方法一</b>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">git clone https://gitee.com/BugaoSion/test.git
+<span style="color: #839496; font-weight: bold;">cd</span> test
+git submodule init
+git submodule update
+</pre>
+</div>
+
+<p>
+<b>方法二</b>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">git clone https://gitee.com/BugaoSion/test.git --recursive
+</pre>
+</div>
+
+<p>
+但是clone下来的子仓库并不在master分支，而是在一个游离状态(可以通过git branch来看当前分支)，这样就很烦了，还得手动切到master分支，真是不想用这鬼功能了！
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #839496; font-weight: bold;">cd</span> damacs
+git checkout master
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org60cf1f9" class="outline-3">
+<h3 id="org60cf1f9">修改子仓库</h3>
+<div class="outline-text-3" id="text-org60cf1f9">
+<p>
+平时修改子仓库的文件就正常修改，修改完要先提交子仓库，如果此时仓库是游离状态，需要用下面命令提交，如果存在冲突，就按正常的来操作好了。然后退到主仓库再提交一下，因为主仓库会记录子仓库的=commit id=。
+</p>
+
+<p>
+用这条强推。
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">git push origin HEAD:master
+</pre>
+</div>
+<p>
+或者使用这个，=eeed149=是commit id。
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">git checkout master
+git cherry-pick eeed149
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org908b74e" class="outline-3">
+<h3 id="org908b74e">更新子仓库</h3>
+<div class="outline-text-3" id="text-org908b74e">
+<p>
+提交麻烦，更新也麻烦，因为当你pull了子仓库以后，一定记得使用=git submodule update=，主仓库也是需要重新提交的，因为commit id变化了嘛。
+</p>
+
+<p>
+更新可以进入子仓库正常操作，也可以这样
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">git submodule update --remote damacs
+</pre>
+</div>
+
+<p>
+再或者
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">git pull --recurse-submodules
+git submodule update --remote --recursive
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org590f62e" class="outline-3">
+<h3 id="org590f62e">删除子仓库</h3>
+<div class="outline-text-3" id="text-org590f62e">
+<p>
+有的时候需要删除子仓库，如果直接使用=rm -rf=会死掉的，正经操作如下
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">git submodule deinit damacs
+<span style="color: #586e75;"># </span><span style="color: #586e75;">- &#21024;&#38500;.gitmodules&#20013;&#65292;&#30456;&#20851;&#20449;&#24687;</span>
+git rm --cached damacs
+rm -rf .git/modules/damacs
+rm -rf damacs
+git add .
+git commit -m <span style="color: #2aa198;">"Remove damacs from test."</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb49c45f" class="outline-3">
+<h3 id="orgb49c45f">批量操作</h3>
+<div class="outline-text-3" id="text-orgb49c45f">
+<p>
+子仓库的操作真的是烦，每个都搞一遍要死人的！所以接下来介绍也下批量操作。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-shell">git submodule foreach &#8216;git checkout master; git pull&#8217;
+</pre>
+</div>
+
+<p>
+这个就是之前说过的切换到master分支的骚操作，一口气把子仓库全部切换到master分支并=pull=一下。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc4c3dec" class="outline-3">
+<h3 id="orgc4c3dec">其他</h3>
+<div class="outline-text-3" id="text-orgc4c3dec">
+<p>
+git 的命令有时候会很长，并过git可以为命令设置短名。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-text">[alias]
+  sbi = submodule init
+  sbu = submodule update
+  sbep = submodule foreach git pull
+  sbecm = submodule foreach git checkout master
+</pre>
+</div>
+
+<p>
+使用了子仓库一段时间，到现在是真香状态。
+</p>
+
+<blockquote>
+<p>
+AUTHOR:  400dama
+</p>
+
+<p>
+LINK:    <a href="https://400dama.xyz/2018/09/13/td-git.html">https://400dama.xyz/2018/09/13/td-git.html</a>
+</p>
+
+<p>
+LICENSE: 本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a> 许可协议。转载请注明出处！
+</p>
+</blockquote>
+</div>
+</div>
+</div>
