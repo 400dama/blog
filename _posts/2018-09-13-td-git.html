@@ -75,7 +75,7 @@ tags       : [TD, GIT]
 </p>
 
 <p>
-运行命令后会让你输入ssh key的名字，这里我先填写为="id<sub>rsa</sub><sub>github</sub>"=，然后一通回车后就创建好了。
+运行命令后会让你输入ssh key的名字，这里我先填写为 id<sub>rsa</sub><sub>github</sub> ，然后一通回车后就创建好了。
 </p>
 
 <div class="org-src-container">
@@ -84,11 +84,11 @@ tags       : [TD, GIT]
 </div>
 
 <p>
-创建好key后需要去github的<a href="https://github.com/settings/ssh/new">SSH设置</a>里把=~/.ssh/id<sub>rsa</sub><sub>github.pub</sub>=里面的内容全部复制进key里，名字随便起，保存即可。
+创建好key后需要去github的<a href="https://github.com/settings/ssh/new">SSH设置</a>里把 ~/.ssh/id<sub>rsa</sub><sub>github.pub</sub> 里面的内容全部复制进key里，名字随便起，保存即可。
 </p>
 
 <p>
-然后再用同样的方法创建一个Gitee的key，邮箱也填写为gitee的注册邮箱，命名为=id<sub>rsa</sub><sub>gitee</sub>=， 然后去<a href="https://gitee.com/profile/sshkeys">SSH Key</a>里进行关联，操作一样。
+然后再用同样的方法创建一个Gitee的key，邮箱也填写为gitee的注册邮箱，命名为 id<sub>rsa</sub><sub>gitee</sub> ， 然后去<a href="https://gitee.com/profile/sshkeys">SSH Key</a>里进行关联，操作一样。
 </p>
 
 <p>
@@ -96,7 +96,7 @@ tags       : [TD, GIT]
 </p>
 
 <p>
-在=~/.ssh=下创建=config=文件，将下面内容复制进去修改成你的保存就行了。
+在 ~/.ssh 下创建 config 文件，将下面内容复制进去修改成你的保存就行了。
 </p>
 
 <div class="org-src-container">
@@ -115,7 +115,7 @@ IdentityFile /home/dama/.ssh/id_rsa_gitee
 </div>
 
 <p>
-如果你需要在同一个平台下设置多个key，也是同样的道理，不过需要修改也下=HOST=后面的内容，类似下面。
+如果你需要在同一个平台下设置多个key，也是同样的道理，不过需要修改也下 HOST 后面的内容，类似下面。
 </p>
 
 <div class="org-src-container">
@@ -154,7 +154,7 @@ ssh -T git@giteeB.com
 </div>
 
 <p>
-如果返回的东西有＝welcome＝就说明成了，可以dun一个庆祝下了。
+如果返回的东西有 welcome 就说明成了，可以dun一个庆祝下了。
 </p>
 
 <p>
@@ -180,7 +180,7 @@ ssh -T git@giteeB.com
 <h3 id="org6b8bf1b">添加子仓库</h3>
 <div class="outline-text-3" id="text-org6b8bf1b">
 <p>
-首先我创建一个空的仓库做为主仓库命名为test，然后使用下面的命令把我emacs的配置文件添加为子仓库。这里使用https连接而不是ssh连接，是因为ssh别人不一定有权限，可以先用https再用=git config submodule.xxx.url=来设置子仓库的url为ssh，当然如果就你自己一个人用就无所谓了(我自己就都是ssh)。
+首先我创建一个空的仓库做为主仓库命名为test，然后使用下面的命令把我emacs的配置文件添加为子仓库。这里使用https连接而不是ssh连接，是因为ssh别人不一定有权限，可以先用https再用 git config submodule.xxx.url 来设置子仓库的url为ssh，当然如果就你自己一个人用就无所谓了(我自己就都是ssh)。
 </p>
 
 <div class="org-src-container">
@@ -238,7 +238,7 @@ git checkout master
 <h3 id="org60cf1f9">修改子仓库</h3>
 <div class="outline-text-3" id="text-org60cf1f9">
 <p>
-平时修改子仓库的文件就正常修改，修改完要先提交子仓库，如果此时仓库是游离状态，需要用下面命令提交，如果存在冲突，就按正常的来操作好了。然后退到主仓库再提交一下，因为主仓库会记录子仓库的=commit id=。
+平时修改子仓库的文件就正常修改，修改完要先提交子仓库，如果此时仓库是游离状态，需要用下面命令提交，如果存在冲突，就按正常的来操作好了。然后退到主仓库再提交一下，因为主仓库会记录子仓库的 commit id 。
 </p>
 
 <p>
@@ -249,7 +249,7 @@ git checkout master
 </pre>
 </div>
 <p>
-或者使用这个，=eeed149=是commit id。
+或者使用这个， eeed149 是commit id。
 </p>
 <div class="org-src-container">
 <pre class="src src-shell">git checkout master
@@ -263,7 +263,7 @@ git cherry-pick eeed149
 <h3 id="org908b74e">更新子仓库</h3>
 <div class="outline-text-3" id="text-org908b74e">
 <p>
-提交麻烦，更新也麻烦，因为当你pull了子仓库以后，一定记得使用=git submodule update=，主仓库也是需要重新提交的，因为commit id变化了嘛。
+提交麻烦，更新也麻烦，因为当你pull了子仓库以后，一定记得使用 git submodule update ，主仓库也是需要重新提交的，因为commit id变化了嘛。
 </p>
 
 <p>
@@ -291,7 +291,7 @@ git submodule update --remote --recursive
 <h3 id="org590f62e">删除子仓库</h3>
 <div class="outline-text-3" id="text-org590f62e">
 <p>
-有的时候需要删除子仓库，如果直接使用=rm -rf=会死掉的，正经操作如下
+有的时候需要删除子仓库，如果直接使用 rm -rf 会死掉的，正经操作如下
 </p>
 
 <div class="org-src-container">
@@ -320,7 +320,7 @@ git commit -m <span style="color: #2aa198;">"Remove damacs from test."</span>
 </div>
 
 <p>
-这个就是之前说过的切换到master分支的骚操作，一口气把子仓库全部切换到master分支并=pull=一下。
+这个就是之前说过的切换到master分支的骚操作，一口气把子仓库全部切换到master分支并 pull 一下。
 </p>
 </div>
 </div>
