@@ -33,7 +33,7 @@ tags       : [Maya, Maya API]
      @dama_timer
      def test_om_02():
          dag_modifier = om.MDagModifier()
-         a = dag_modifier.createNode('transform')
+         joint_parent = dag_modifier.createNode('transform')
          for i in LOOP_TIMES:
              joint_obj = dag_modifier.createNode('joint', joint_parent)
              joint_parent = joint_obj
