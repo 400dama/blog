@@ -1,0 +1,99 @@
+#+startup: showall
+#+options: toc:nil
+#+begin_export html
+---
+layout     : post
+title      : Maya Python API 1.0 和 2.0 对比实验笔记
+categories : [Maya, Maya API]
+tags       : [Maya, Maya API]
+---
+#+end_export
+#+TOC: headlines 2
+
+在今年三四月的时候，我的好朋友 Zepar 优化了也个批量生成骨骼链的工具，当时他没有找到 Maya Python API 2.0 下的 MFnIkJoint，所以使用 Maya Python API 1.0 来生成了骨骼链。
+前段时间我决定玩一下 Maya Python API 2.0, 想到了尝试改写一下他的批量骨骼链工具，来对比一下两种的差距，所以有了这篇实验笔记。好了，直接上代码！
+
+* 测试代码
+
+** Maya Python API 1.0 
+   方法一：
+      这个方法是 Zepar 提供的，当时使用的代码。
+   #+BEGIN_SRC python
+     @dama_timer
+     def test_om_01():
+         joint_parent = om.MObject()
+         for i in LOOP_TIMES:
+             joint_obj = oma.MFnIkJoint()
+             joint_obj.create(joint_parent)
+             joint_parent = joint_obj.object()
+   #+END_SRC
+   方法二：
+      这个是我根据 Maya Python API 2.0 的方式改写 Maya Python API 1.0 代码（不然总感觉对 Zepar 的方法不公平）。
+   #+BEGIN_SRC python
+     @dama_timer
+     def test_om_02():
+         dag_modifier = om.MDagModifier()
+         a = dag_modifier.createNode('transform')
+         for i in LOOP_TIMES:
+             joint_obj = dag_modifier.createNode('joint', joint_parent)
+             joint_parent = joint_obj
+         dag_modifier.doIt()
+   #+END_SRC
+
+** Maya Python API 2.0
+   这个是我用 Maya Python API 2.0 写出来的代码。
+   #+BEGIN_SRC python
+     @dama_timer
+     def test_om2():
+         dag_modifier = om2.MDagModifier()
+         joint_parent = dag_modifier.createNode('transform')
+         dag_modifier.renameNode(joint_parent, 'test')
+         for i in LOOP_TIMES:
+             joint_obj = dag_modifier.createNode('joint', joint_parent)
+             joint_p篇arent = joint_obj
+         dag_modifier.doIt()
+   #+END_SRC
+
+* 运行结果
+
+我分别测试了 5k 次、1w 次、2w 次和 5w 次，代码运行时间分别为（单位：秒）
+
+** 5k 次
+
+   - 方法一： 2.375
+   - 方法二： 1.996
+   - api2.0: 0.733
+
+** 1w 次
+
+   - 方法一： 9.297
+   - 方法二： 7.442
+   - api2.0: 2.168
+
+
+** 2w 次
+
+   - 方法一： 46.578
+   - 方法二： 39.406
+   - api2.0: 7,036
+
+** 5w 次
+
+   - 方法一： 431.672
+   - 方法二： 390.718
+   - api2.0: 42.838
+
+从我这里得出的结论来看用 Maya Python API 2.0 创建 MDagModifier 的方法效率会随量级的增加更有优势（毕竟是 ctype 优化过）， 从 Maya Python API 1.0 的两种方法来看， MDagModifier 效率会略高，毕竟只 doIt 了一次！但是好像用没怎么见过用 MDagModifier 创建的案例，可能会出现什么问题吧，之后再我会研究下看会不会出现问题。
+
+* 我的结论
+
+Maya Python API 2.0 真香！
+
+
+#+BEGIN_QUOTE
+AUTHOR:  400dama
+
+LINK:    https://400dama.xyz/2018/09/28/Maya-Python-Api-1.0-or-2.0.html
+
+LICENSE: 本博客所有文章除特别声明外，均采用 [[https://creativecommons.org/licenses/by-nc/4.0/][CC BY-NC 4.0]] 许可协议。转载请注明出处！
+#+END_QUOTE

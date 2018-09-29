@@ -1,0 +1,176 @@
+---
+layout     : post
+title      : Maya Python API 1.0 和 2.0 对比实验笔记
+categories : [Maya, Maya API]
+tags       : [Maya, Maya API]
+---
+<div id="table-of-contents">
+<h2>&#30446;&#24405;</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org46d4887">测试代码</a>
+<ul>
+<li><a href="#org7d941e5">Maya Python API 1.0</a></li>
+<li><a href="#org0481cea">Maya Python API 2.0</a></li>
+</ul>
+</li>
+<li><a href="#orgf2f1ffe">运行结果</a>
+<ul>
+<li><a href="#orgc1dca5a">5k 次</a></li>
+<li><a href="#org9661781">1w 次</a></li>
+<li><a href="#org1235b96">2w 次</a></li>
+<li><a href="#org92b7c68">5w 次</a></li>
+</ul>
+</li>
+<li><a href="#org56f6d5d">我的结论</a></li>
+</ul>
+</div>
+</div>
+
+<p>
+在今年三四月的时候，我的好朋友 Zepar 优化了也个批量生成骨骼链的工具，当时他没有找到 Maya Python API 2.0 下的 MFnIkJoint，所以使用 Maya Python API 1.0 来生成了骨骼链。
+前段时间我决定玩一下 Maya Python API 2.0, 想到了尝试改写一下他的批量骨骼链工具，来对比一下两种的差距，所以有了这篇实验笔记。好了，直接上代码！
+</p>
+
+<div id="outline-container-org46d4887" class="outline-2">
+<h2 id="org46d4887">测试代码</h2>
+<div class="outline-text-2" id="text-org46d4887">
+</div>
+<div id="outline-container-org7d941e5" class="outline-3">
+<h3 id="org7d941e5">Maya Python API 1.0</h3>
+<div class="outline-text-3" id="text-org7d941e5">
+<p>
+方法一：
+   这个方法是 Zepar 提供的，当时使用的代码。
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #b58900;">@dama_timer</span>
+<span style="color: #859900; font-weight: bold;">def</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">test_om_01</span>():
+<span style="color: #586e75; font-style: italic;">    </span><span style="color: #268bd2;">joint_parent</span><span style="color: #586e75; font-style: italic;"> </span>=<span style="color: #586e75; font-style: italic;"> </span>om.MObject()
+<span style="color: #586e75; font-style: italic;">    </span><span style="color: #859900; font-weight: bold;">for</span><span style="color: #586e75; font-style: italic;"> </span>i<span style="color: #586e75; font-style: italic;"> </span><span style="color: #859900; font-weight: bold;">in</span><span style="color: #586e75; font-style: italic;"> </span>LOOP_TIMES:
+<span style="color: #586e75; font-style: italic;">        </span><span style="color: #268bd2;">joint_obj</span><span style="color: #586e75; font-style: italic;"> </span>=<span style="color: #586e75; font-style: italic;"> </span>oma.MFnIkJoint()
+<span style="color: #586e75; font-style: italic;">        </span>joint_obj.create(joint_parent)
+<span style="color: #586e75; font-style: italic;">        </span><span style="color: #268bd2;">joint_parent</span><span style="color: #586e75; font-style: italic;"> </span>=<span style="color: #586e75; font-style: italic;"> </span>joint_obj.<span style="color: #839496; font-weight: bold;">object</span>()
+</pre>
+</div>
+<p>
+方法二：
+   这个是我根据 Maya Python API 2.0 的方式改写 Maya Python API 1.0 代码（不然总感觉对 Zepar 的方法不公平）。
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #b58900;">@dama_timer</span>
+<span style="color: #859900; font-weight: bold;">def</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">test_om_02</span>():
+<span style="color: #586e75; font-style: italic;">    </span><span style="color: #268bd2;">dag_modifier</span><span style="color: #586e75; font-style: italic;"> </span>=<span style="color: #586e75; font-style: italic;"> </span>om.MDagModifier()
+<span style="color: #586e75; font-style: italic;">    </span><span style="color: #268bd2;">a</span><span style="color: #586e75; font-style: italic;"> </span>=<span style="color: #586e75; font-style: italic;"> </span>dag_modifier.createNode(<span style="color: #2aa198;">'transform'</span>)
+<span style="color: #586e75; font-style: italic;">    </span><span style="color: #859900; font-weight: bold;">for</span><span style="color: #586e75; font-style: italic;"> </span>i<span style="color: #586e75; font-style: italic;"> </span><span style="color: #859900; font-weight: bold;">in</span><span style="color: #586e75; font-style: italic;"> </span>LOOP_TIMES:
+<span style="color: #586e75; font-style: italic;">        </span><span style="color: #268bd2;">joint_obj</span><span style="color: #586e75; font-style: italic;"> </span>=<span style="color: #586e75; font-style: italic;"> </span>dag_modifier.createNode(<span style="color: #2aa198;">'joint'</span>,<span style="color: #586e75; font-style: italic;"> </span>joint_parent)
+<span style="color: #586e75; font-style: italic;">        </span><span style="color: #268bd2;">joint_parent</span><span style="color: #586e75; font-style: italic;"> </span>=<span style="color: #586e75; font-style: italic;"> </span>joint_obj
+<span style="color: #586e75; font-style: italic;">    </span>dag_modifier.doIt()
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0481cea" class="outline-3">
+<h3 id="org0481cea">Maya Python API 2.0</h3>
+<div class="outline-text-3" id="text-org0481cea">
+<p>
+这个是我用 Maya Python API 2.0 写出来的代码。
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #b58900;">@dama_timer</span>
+<span style="color: #859900; font-weight: bold;">def</span><span style="color: #586e75; font-style: italic;"> </span><span style="color: #268bd2;">test_om2</span>():
+<span style="color: #586e75; font-style: italic;">    </span><span style="color: #268bd2;">dag_modifier</span><span style="color: #586e75; font-style: italic;"> </span>=<span style="color: #586e75; font-style: italic;"> </span>om2.MDagModifier()
+<span style="color: #586e75; font-style: italic;">    </span><span style="color: #268bd2;">joint_parent</span><span style="color: #586e75; font-style: italic;"> </span>=<span style="color: #586e75; font-style: italic;"> </span>dag_modifier.createNode(<span style="color: #2aa198;">'transform'</span>)
+<span style="color: #586e75; font-style: italic;">    </span>dag_modifier.renameNode(joint_parent,<span style="color: #586e75; font-style: italic;"> </span><span style="color: #2aa198;">'test'</span>)
+<span style="color: #586e75; font-style: italic;">    </span><span style="color: #859900; font-weight: bold;">for</span><span style="color: #586e75; font-style: italic;"> </span>i<span style="color: #586e75; font-style: italic;"> </span><span style="color: #859900; font-weight: bold;">in</span><span style="color: #586e75; font-style: italic;"> </span>LOOP_TIMES:
+<span style="color: #586e75; font-style: italic;">        </span><span style="color: #268bd2;">joint_obj</span><span style="color: #586e75; font-style: italic;"> </span>=<span style="color: #586e75; font-style: italic;"> </span>dag_modifier.createNode(<span style="color: #2aa198;">'joint'</span>,<span style="color: #586e75; font-style: italic;"> </span>joint_parent)
+<span style="color: #586e75; font-style: italic;">        </span><span style="color: #268bd2;">joint_p&#31687;arent</span><span style="color: #586e75; font-style: italic;"> </span>=<span style="color: #586e75; font-style: italic;"> </span>joint_obj
+<span style="color: #586e75; font-style: italic;">    </span>dag_modifier.doIt()
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf2f1ffe" class="outline-2">
+<h2 id="orgf2f1ffe">运行结果</h2>
+<div class="outline-text-2" id="text-orgf2f1ffe">
+<p>
+我分别测试了 5k 次、1w 次、2w 次和 5w 次，代码运行时间分别为（单位：秒）
+</p>
+</div>
+
+<div id="outline-container-orgc1dca5a" class="outline-3">
+<h3 id="orgc1dca5a">5k 次</h3>
+<div class="outline-text-3" id="text-orgc1dca5a">
+<ul class="org-ul">
+<li>方法一： 2.375</li>
+<li>方法二： 1.996</li>
+<li>api2.0: 0.733</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org9661781" class="outline-3">
+<h3 id="org9661781">1w 次</h3>
+<div class="outline-text-3" id="text-org9661781">
+<ul class="org-ul">
+<li>方法一： 9.297</li>
+<li>方法二： 7.442</li>
+<li>api2.0: 2.168</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org1235b96" class="outline-3">
+<h3 id="org1235b96">2w 次</h3>
+<div class="outline-text-3" id="text-org1235b96">
+<ul class="org-ul">
+<li>方法一： 46.578</li>
+<li>方法二： 39.406</li>
+<li>api2.0: 7,036</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org92b7c68" class="outline-3">
+<h3 id="org92b7c68">5w 次</h3>
+<div class="outline-text-3" id="text-org92b7c68">
+<ul class="org-ul">
+<li>方法一： 431.672</li>
+<li>方法二： 390.718</li>
+<li>api2.0: 42.838</li>
+</ul>
+
+<p>
+从我这里得出的结论来看用 Maya Python API 2.0 创建 MDagModifier 的方法效率会随量级的增加更有优势（毕竟是 ctype 优化过）， 从 Maya Python API 1.0 的两种方法来看， MDagModifier 效率会略高，毕竟只 doIt 了一次！但是好像用没怎么见过用 MDagModifier 创建的案例，可能会出现什么问题吧，之后再我会研究下看会不会出现问题。
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org56f6d5d" class="outline-2">
+<h2 id="org56f6d5d">我的结论</h2>
+<div class="outline-text-2" id="text-org56f6d5d">
+<p>
+Maya Python API 2.0 真香！
+</p>
+
+
+<blockquote>
+<p>
+AUTHOR:  400dama
+</p>
+
+<p>
+LINK:    <a href="https://400dama.xyz/2018/09/28/Maya-Python-Api-1.0-or-2.0.html">https://400dama.xyz/2018/09/28/Maya-Python-Api-1.0-or-2.0.html</a>
+</p>
+
+<p>
+LICENSE: 本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a> 许可协议。转载请注明出处！
+</p>
+</blockquote>
+</div>
+</div>
