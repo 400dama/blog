@@ -28,8 +28,8 @@ tags       : [Maya, Maya API]
 </div>
 
 <p>
-在今年三四月的时候，我的好朋友 Zepar 优化了也个批量生成骨骼链的工具，当时他没有找到 Maya Python API 2.0 下的 MFnIkJoint，所以使用 Maya Python API 1.0 来生成了骨骼链。
-前段时间我决定玩一下 Maya Python API 2.0, 想到了尝试改写一下他的批量骨骼链工具，来对比一下两种的差距，所以有了这篇实验笔记。好了，直接上代码！
+在今年三四月的时候，我的好朋友 Zepar 优化了一个批量生成骨骼链的工具，当时他没有找到 Maya Python API 2.0 下的 MFnIkJoint，所以使用 Maya Python API 1.0 来生成了骨骼链。
+前段时间我决定玩一下 Maya Python API 2.0, 想到了尝试改写一下他的批量骨骼链工具，来对比一下两者之间的差距，所以有了这篇实验笔记。好了，直接上代码！
 </p>
 
 <div id="outline-container-org46d4887" class="outline-2">
@@ -41,7 +41,7 @@ tags       : [Maya, Maya API]
 <div class="outline-text-3" id="text-org7d941e5">
 <p>
 方法一：
-   这个方法是 Zepar 提供的，当时使用的代码。
+   这个方法是 Zepar 提供的，他当时使用的代码。
 </p>
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #b58900;">@dama_timer</span>
@@ -55,7 +55,7 @@ tags       : [Maya, Maya API]
 </div>
 <p>
 方法二：
-   这个是我根据 Maya Python API 2.0 的方式改写 Maya Python API 1.0 代码（不然总感觉对 Zepar 的方法不公平）。
+   这个是我根据 Maya Python API 2.0 的方式改写 Maya Python API 1.0 代码（不然总感觉对 1.0 不公平）。
 </p>
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #b58900;">@dama_timer</span>
