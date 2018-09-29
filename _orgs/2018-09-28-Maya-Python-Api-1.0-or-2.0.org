@@ -50,7 +50,7 @@ tags       : [Maya, Maya API]
          dag_modifier.renameNode(joint_parent, 'test')
          for i in LOOP_TIMES:
              joint_obj = dag_modifier.createNode('joint', joint_parent)
-             joint_p篇arent = joint_obj
+             joint_parent = joint_obj
          dag_modifier.doIt()
    #+END_SRC
 
